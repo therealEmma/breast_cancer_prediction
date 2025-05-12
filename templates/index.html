@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Breast Cancer Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        .feature-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #34495e;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            margin: 30px auto;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            display: none;
+        }
+        .malignant {
+            background-color: #ffdddd;
+            color: #c0392b;
+            border: 1px solid #c0392b;
+        }
+        .benign {
+            background-color: #ddffdd;
+            color: #27ae60;
+            border: 1px solid #27ae60;
+        }
+        #probability {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 18px;
+            display: none;
+        }
+        .instructions {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Breast Cancer Diagnosis Predictor</h2>
+    
+    <div class="instructions">
+        <p>Enter the 30 feature values from breast mass characteristics. All values should be numerical. The features are computed from a digitized image of a fine needle aspirate (FNA) of a breast mass.</p>
+    </div>
+    
+    <div class="form-container">
+        <form id="predictForm">
+            <div class="feature-grid">
+                <!-- Mean Features -->
+                <div class="feature-group">
+                    <label for="mean_radius">Mean Radius (mean of distances from center to points on the perimeter):</label>
+                    <input type="number" step="0.0001" id="mean_radius" required>
+                </div>
+                <div class="feature-group">
+                    <label for="mean_texture">Mean Texture (standard deviation of gray-scale values):</label>
+                    <input type="number" step="0.0001" id="mean_texture" required>
+                </div>
+                <div class="feature-group">
+                    <label for="mean_perimeter">Mean Perimeter:</label>
+                    <input type="number" step="0.0001" id="mean_perimeter" required>
+                </div>
+                <div class="feature-group">
+                    <label for="mean_area">Mean Area:</label>
+                    <input type="number" step="0.0001" id="mean_area" required>
+                </div>
+                <div class="feature-group">
+                    <label for="mean_smoothness">Mean Smoothness (local variation in radius lengths):</label>
+                    <input type="number" step="0.0001" id="mean_smoothness" required>
+                </div>
+                <div class="feature-group">
+                    <label for="mean_compactness">Mean Compactness (perimeter² / area - 1.0):</label>
+                    <input type="number" step="0.0001" id="mean_compactness" required>
+                </div>
+                <div class="feature-group">
+                    <label for="mean_concavity">Mean Concavity (severity of concave portions of the contour):</label>
+                    <input type="number" step="0.0001" id="mean_concavity" required>
+                </div>
+                <div class="feature-group">
+                    <label for="mean_concave_points">Mean Concave Points (number of concave portions):</label>
+                    <input type="number" step="0.0001" id="mean_concave_points" required>
+                </div>
+                <div class="feature-group">
+                    <label for="mean_symmetry">Mean Symmetry:</label>
+                    <input type="number" step="0.0001" id="mean_symmetry" required>
+                </div>
+                <div class="feature-group">
+                    <label for="mean_fractal_dimension">Mean Fractal Dimension ("coastline approximation" - 1):</label>
+                    <input type="number" step="0.0001" id="mean_fractal_dimension" required>
+                </div>
+
+                <!-- Error Features -->
+                <div class="feature-group">
+                    <label for="radius_error">Radius Error:</label>
+                    <input type="number" step="0.0001" id="radius_error" required>
+                </div>
+                <div class="feature-group">
+                    <label for="texture_error">Texture Error:</label>
+                    <input type="number" step="0.0001" id="texture_error" required>
+                </div>
+                <div class="feature-group">
+                    <label for="perimeter_error">Perimeter Error:</label>
+                    <input type="number" step="0.0001" id="perimeter_error" required>
+                </div>
+                <div class="feature-group">
+                    <label for="area_error">Area Error:</label>
+                    <input type="number" step="0.0001" id="area_error" required>
+                </div>
+                <div class="feature-group">
+                    <label for="smoothness_error">Smoothness Error:</label>
+                    <input type="number" step="0.0001" id="smoothness_error" required>
+                </div>
+                <div class="feature-group">
+                    <label for="compactness_error">Compactness Error:</label>
+                    <input type="number" step="0.0001" id="compactness_error" required>
+                </div>
+                <div class="feature-group">
+                    <label for="concavity_error">Concavity Error:</label>
+                    <input type="number" step="0.0001" id="concavity_error" required>
+                </div>
+                <div class="feature-group">
+                    <label for="concave_points_error">Concave Points Error:</label>
+                    <input type="number" step="0.0001" id="concave_points_error" required>
+                </div>
+                <div class="feature-group">
+                    <label for="symmetry_error">Symmetry Error:</label>
+                    <input type="number" step="0.0001" id="symmetry_error" required>
+                </div>
+                <div class="feature-group">
+                    <label for="fractal_dimension_error">Fractal Dimension Error:</label>
+                    <input type="number" step="0.0001" id="fractal_dimension_error" required>
+                </div>
+
+                <!-- Worst Features -->
+                <div class="feature-group">
+                    <label for="worst_radius">Worst Radius:</label>
+                    <input type="number" step="0.0001" id="worst_radius" required>
+                </div>
+                <div class="feature-group">
+                    <label for="worst_texture">Worst Texture:</label>
+                    <input type="number" step="0.0001" id="worst_texture" required>
+                </div>
+                <div class="feature-group">
+                    <label for="worst_perimeter">Worst Perimeter:</label>
+                    <input type="number" step="0.0001" id="worst_perimeter" required>
+                </div>
+                <div class="feature-group">
+                    <label for="worst_area">Worst Area:</label>
+                    <input type="number" step="0.0001" id="worst_area" required>
+                </div>
+                <div class="feature-group">
+                    <label for="worst_smoothness">Worst Smoothness:</label>
+                    <input type="number" step="0.0001" id="worst_smoothness" required>
+                </div>
+                <div class="feature-group">
+                    <label for="worst_compactness">Worst Compactness:</label>
+                    <input type="number" step="0.0001" id="worst_compactness" required>
+                </div>
+                <div class="feature-group">
+                    <label for="worst_concavity">Worst Concavity:</label>
+                    <input type="number" step="0.0001" id="worst_concavity" required>
+                </div>
+                <div class="feature-group">
+                    <label for="worst_concave_points">Worst Concave Points:</label>
+                    <input type="number" step="0.0001" id="worst_concave_points" required>
+                </div>
+                <div class="feature-group">
+                    <label for="worst_symmetry">Worst Symmetry:</label>
+                    <input type="number" step="0.0001" id="worst_symmetry" required>
+                </div>
+                <div class="feature-group">
+                    <label for="worst_fractal_dimension">Worst Fractal Dimension:</label>
+                    <input type="number" step="0.0001" id="worst_fractal_dimension" required>
+                </div>
+            </div>
+            
+            <button type="submit">Predict Diagnosis</button>
+        </form>
+    </div>
+    
+    <div id="result"></div>
+    <div id="probability"></div>
+    
+    <script>
+        document.getElementById('predictForm').onsubmit = async function(e) {
+            e.preventDefault();
+            
+            // Collect all input values in the correct order
+            const feature_ids = [
+                'mean_radius', 'mean_texture', 'mean_perimeter', 'mean_area',
+                'mean_smoothness', 'mean_compactness', 'mean_concavity',
+                'mean_concave_points', 'mean_symmetry', 'mean_fractal_dimension',
+                'radius_error', 'texture_error', 'perimeter_error', 'area_error',
+                'smoothness_error', 'compactness_error', 'concavity_error',
+                'concave_points_error', 'symmetry_error', 'fractal_dimension_error',
+                'worst_radius', 'worst_texture', 'worst_perimeter', 'worst_area',
+                'worst_smoothness', 'worst_compactness', 'worst_concavity',
+                'worst_concave_points', 'worst_symmetry', 'worst_fractal_dimension'
+            ];
+            
+            let inputs = feature_ids.map(id => {
+                const value = document.getElementById(id).value;
+                const numValue = parseFloat(value);
+                if (isNaN(numValue)) {
+                    throw new Error(`Invalid value for ${id}`);
+                }
+                return numValue;
+            });
+            
+            try {
+                // Show loading state
+                const resultDiv = document.getElementById('result');
+                resultDiv.textContent = 'Analyzing...';
+                resultDiv.style.display = 'block';
+                resultDiv.className = '';
+                
+                // Hide probability during loading
+                document.getElementById('probability').style.display = 'none';
+                
+                // Make prediction request
+                let res = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ features: inputs })
+                });
+                
+                if (!res.ok) {
+                    const error = await res.json();
+                    throw new Error(error.error || 'Prediction failed');
+                }
+                
+                let data = await res.json();
+                
+                // Display results
+                resultDiv.textContent = `Diagnosis: ${data.diagnosis}`;
+                resultDiv.className = data.diagnosis.toLowerCase();
+                
+                const probabilityDiv = document.getElementById('probability');
+                probabilityDiv.textContent = `Malignancy Probability: ${(data.probability * 100).toFixed(2)}%`;
+                probabilityDiv.style.display = 'block';
+                probabilityDiv.className = data.diagnosis.toLowerCase();
+                
+            } catch (error) {
+                console.error('Prediction error:', error);
+                document.getElementById('result').textContent = `Error: ${error.message}`;
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('result').className = '';
+            }
+        };
+    </script>
+</body>
+</html>
